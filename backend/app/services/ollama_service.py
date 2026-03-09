@@ -8,14 +8,31 @@ import httpx
 _EXPAND_PROMPT = """\
 The user wants to: "{query}"
 
-Think about what technical skills and tools they need to accomplish this.
-Available skill categories include: frontend frameworks (React, Vue, Angular, Next.js, Svelte, Astro), \
-UI/design (Tailwind, shadcn-ui, accessibility, Figma), backend (Node.js, Python, FastAPI, Express, GraphQL, REST APIs), \
-databases (PostgreSQL, MongoDB, Prisma, Redis, Supabase), DevOps/cloud (Docker, AWS, Cloudflare, CI/CD, Terraform), \
-testing (Vitest, Playwright, Jest, pytest), AI/agents (LLM integration, MCP tools, RAG, embeddings, Claude/OpenAI SDKs), \
-mobile (Swift, iOS, Android, Flutter), security (auth, OAuth, JWT), and developer productivity (documentation, markdown, code quality).
-Generate a concise search query (2-4 sentences) listing the most relevant skill areas from the categories above.
-Return ONLY the expanded query text, no preamble or explanation.\
+The user wants to accomplish the following task: "{query}"
+
+Your job is to rewrite this request into a short retrieval-friendly query that better matches the terminology and skill descriptions likely stored in the database. 
+
+Identify the most relevant technical skills, tools, frameworks, and implementation areas related to the user's goal. Use the available skill categories below as a guide, and include only the categories that are truly relevant:
+
+- Frontend frameworks: React, Vue, Angular, Next.js, Svelte, Astro
+- UI/design: Tailwind, shadcn-ui, accessibility, Figma
+- Backend: Node.js, Python, FastAPI, Express, GraphQL, REST APIs
+- Databases: PostgreSQL, MongoDB, Prisma, Redis, Supabase
+- DevOps/cloud: Docker, AWS, Cloudflare, CI/CD, Terraform, Containers, Kubernetes
+- Testing: Vitest, Playwright, Jest, pytest
+- AI/agents: LLM integration, MCP tools, RAG, embeddings, Claude/OpenAI SDKs, OpenClaw
+- Mobile: Swift, iOS, Android, Flutter
+- Security: auth, OAuth, JWT
+- Developer productivity: documentation, markdown, code quality
+- Productivity: Powerpoints, Notion, Slack, Miro, Excel
+
+Write a concise expanded query in 2-4 sentences that:
+1. Restates the user's goal in clearer technical terms
+2. Adds the most relevant skill areas, tools, and frameworks
+3. Uses wording that would help match existing database entries
+4. Avoids adding irrelevant categories or unnecessary detail
+
+Return ONLY the expanded query text, with no bullet points, labels, or explanation.
 """
 
 _EXPLAIN_PROMPT = """\
@@ -25,7 +42,7 @@ Recommended skills:
 {skills}
 
 For each skill write ONE line in this exact format:
-[skill-name] — [one sentence why it specifically helps the user accomplish their goal]
+[skill-name] — [one sentence how it specifically helps the user accomplish their goal]
 
 If two skills are very similar in purpose, group them on one line:
 [skill-a] / [skill-b] — [one sentence, note which is more relevant]
